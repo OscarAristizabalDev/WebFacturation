@@ -1,0 +1,79 @@
+<div class="container">
+    <div class="long-title">
+        <h3>Formulario de factura de venta</h3>
+    </div>
+    <!-- Formulario de la factura -->
+    <form [formGroup]="accountForm">
+        <dx-form id="form">
+            <dxi-item itemType="group" cssClass="first-group" [colCount]="4">
+                <dxi-item itemType="group" [colSpan]="2">
+                    <dx-select-box #customer [(dataSource)]="customers" label="Seleccione un cliente" displayExpr="firstName" valueExpr="id" [searchEnabled]="true" formControlName="customerId" [isValid]="customerIdControl.valid"></dx-select-box>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="2">
+                    <dx-date-box type="date" label="Fecha de registro" formControlName="accountDate" [isValid]="accountDateControl.valid"></dx-date-box>
+                </dxi-item>
+                <dxi-item itemType="group">
+                    Adicionar producto
+                    <dx-button icon="add" (onClick)="displayFormProduct()" [disabled]="!accountForm.valid"></dx-button>
+                </dxi-item>
+            </dxi-item>
+        </dx-form>
+    </form>
+    <br>
+    <br>
+    <!-- Formulario de los productos de la factura -->
+    <form [formGroup]="accountDetailForm" *ngIf="isAddProduct">
+        <div class="long-title">
+            <h4>Adicionar productos</h4>
+        </div>
+        <dx-form>
+            <dxi-item itemType="group" cssClass="first-group" [colCount]="4">
+                <dxi-item itemType="group" [colSpan]="1">
+                    <dxi-item itemType="group" [colSpan]="2">
+                        <dx-select-box #product [(dataSource)]="products" label="Seleccione un producto" displayExpr="name" valueExpr="id" [searchEnabled]="true" formControlName="productId" (onValueChanged)="onSelectProduct($event)" [isValid]="productIdControl.valid"></dx-select-box>
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                    <dx-text-box [(value)]="priceProduct" [disabled]="true" label="Precio"> </dx-text-box>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                    <dx-number-box [min]="0" (onValueChanged)="calculateSubTotal($event)" formControlName="quantity" label="Cantidad" [isValid]="quantityControl.valid"></dx-number-box>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                    <dx-number-box [min]="0" formControlName="total" label="Total" [(ngModel)]="total" [disabled]="true"></dx-number-box>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="1">
+                    <dxi-item itemType="group" cssClass="first-group" [colCount]="2">
+                        <dxi-item itemType="group" [colSpan]="1">
+                            <dx-button icon="check" text="Adicionar" type="success" [disabled]="!accountDetailForm.valid" (onClick)="addProductAccount($event, accountDetailForm)"></dx-button>
+                        </dxi-item>
+                        <dxi-item itemType="group" [colSpan]="1">
+                            <dx-button icon="remove" text="Cancelar" (onClick)="cancelProductAccount($event)"></dx-button>
+                        </dxi-item>
+                    </dxi-item>
+                </dxi-item>
+            </dxi-item>
+        </dx-form>
+    </form>
+    <!-- Listado de productos -->
+    <div class="long-title">
+        <h4>Listado de productos</h4>
+    </div>
+    <dx-data-grid id="gridContainer" [dataSource]="accountDetails" [columns]="['productName', 'quantity', 'total']" [showBorders]="true">
+        <dxi-column dataField="productName" alignment="right"></dxi-column>
+        <dxi-column dataField="quantity" alignment="right"></dxi-column>
+        <dxi-column dataField="total" alignment="right" format="currency"></dxi-column>
+        <dxo-summary>
+            <dxi-total-item column="total" summaryType="sum" valueFormat="currency"></dxi-total-item>
+        </dxo-summary>
+    </dx-data-grid>
+    <br>
+    <br>
+    <dx-button icon="check" text="Registrar factura" type="success" [disabled]="!accountForm.valid || accountDetails.length == 0" (onClick)="addAccount($event, accountForm)"></dx-button>
+</div>
